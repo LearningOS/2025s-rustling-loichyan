@@ -45,6 +45,7 @@
             };
 
             cargoLock.lockFile = ./Cargo.lock;
+            doCheck = false;
           };
       in
       {
