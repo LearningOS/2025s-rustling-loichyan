@@ -2,11 +2,9 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
 
 #[derive(Debug)]
 struct Node<T> {
@@ -69,14 +67,46 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(list_a: LinkedList<T>, list_b: LinkedList<T>) -> Self
+	where
+	    T: Ord,
 	{
-		//TODO
-		Self {
-            length: 0,
+	    let mut merged = Self {
+            length: list_a.length + list_b.length,
             start: None,
             end: None,
+	    };
+        let mut node_a = list_a.start;
+        let mut node_b = list_b.start;
+        loop {
+            let Some(a) = node_a.take().or_else(|| node_b.take()) else {
+                break;
+            };
+            let max;
+            if let Some(b) = node_b.take() {
+                unsafe {
+                    if a.as_ref().val < b.as_ref().val {
+                        node_a = a.as_ref().next;
+                        node_b = Some(b);
+                        max = a;
+                    } else {
+                        node_a = Some(a);
+                        node_b = b.as_ref().next;
+                        max = b;
+                    }
+                }
+            } else {
+                max = a;
+            }
+            if let Some(ref mut e) = merged.end {
+                unsafe { e.as_mut().next = Some(max); }
+                *e = max;
+            } else {
+                merged.start = Some(max);
+                merged.end = Some(max);
+            };
         }
+		merged
 	}
 }
 
@@ -135,7 +165,7 @@ mod tests {
 		let vec_a = vec![1,3,5,7];
 		let vec_b = vec![2,4,6,8];
 		let target_vec = vec![1,2,3,4,5,6,7,8];
-		
+
 		for i in 0..vec_a.len(){
 			list_a.add(vec_a[i]);
 		}
