@@ -3,11 +3,17 @@
 	This problem requires you to implement a sorting algorithm
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
-// I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T: Ord>(array: &mut [T]){
+	for i in (2..=array.len()).into_iter().rev() {
+	    for j in 1..i {
+            if array[j] < array[j - 1] {
+                array.swap(j, j - 1);
+            }
+	    }
+	}
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
