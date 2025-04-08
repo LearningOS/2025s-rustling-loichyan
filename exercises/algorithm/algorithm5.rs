@@ -3,12 +3,9 @@
 	This problem requires you to implement a basic BFS algorithm
 */
 
-//I AM NOT DONE
-use std::collections::VecDeque;
-
 // Define a graph
 struct Graph {
-    adj: Vec<Vec<usize>>, 
+    adj: Vec<Vec<usize>>,
 }
 
 impl Graph {
@@ -21,17 +18,31 @@ impl Graph {
 
     // Add an edge to the graph
     fn add_edge(&mut self, src: usize, dest: usize) {
-        self.adj[src].push(dest); 
-        self.adj[dest].push(src); 
+        self.adj[src].push(dest);
+        self.adj[dest].push(src);
     }
 
     // Perform a breadth-first search on the graph, return the order of visited nodes
     fn bfs_with_return(&self, start: usize) -> Vec<usize> {
-        
-		//TODO
+        println!("{:?}", self.adj);
+        let mut ans = vec![];
+        self.bfs(&[start], &mut vec![0; self.adj.len()], &mut ans);
+        ans
+    }
 
-        let mut visit_order = vec![];
-        visit_order
+    fn bfs(&self, adj: &[usize], visited: &mut [u8], ans: &mut Vec<usize>) {
+        for s in adj.iter().copied() {
+            if visited[s] == 0 {
+                visited[s] = 1;
+                ans.push(s);
+            }
+        }
+        for s in adj.iter().copied() {
+            if visited[s] == 1 {
+                visited[s] = 2;
+                self.bfs(&self.adj[s], visited, ans);
+            }
+        }
     }
 }
 
@@ -78,7 +89,7 @@ mod tests {
 
     #[test]
     fn test_bfs_single_node() {
-        let mut graph = Graph::new(1);
+        let graph = Graph::new(1);
 
         let visited_order = graph.bfs_with_return(0);
         assert_eq!(visited_order, vec![0]);
