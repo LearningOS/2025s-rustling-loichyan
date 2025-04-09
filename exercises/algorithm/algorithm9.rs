@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -36,8 +35,23 @@ where
         self.len() == 0
     }
 
-    pub fn add(&mut self, value: T) {
-        //TODO
+    pub fn add(&mut self, mut value: T) {
+        if self.count == self.items.len() {
+            self.items.resize_with(self.items.len() * 2, T::default);
+        }
+        let mut idx = self.count;
+        self.items[idx] = value;
+        self.count += 1;
+
+        while idx != 0 {
+            let parent_idx = idx / 2;
+            if (self.comparator)(&self.items[idx], &self.items[parent_idx]) {
+                self.items.swap(idx, parent_idx);
+                idx = parent_idx;
+            } else {
+                break;
+            }
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,7 +71,6 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
 		0
     }
 }
@@ -84,8 +97,32 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.count == 0 {
+            return None;
+        }
+        self.items.swap(0, self.count - 1);
+        self.count -= 1;
+
+        let mut idx = 0;
+        loop {
+            let left_idx = idx * 2;
+            let right_idx = left_idx + 1;
+            if right_idx >= self.count  {
+                break;
+            }
+
+            if (self.comparator)(&self.items[right_idx], &self.items[idx]) {
+                self.items.swap(right_idx, idx);
+                idx = right_idx;
+            } else if (self.comparator)(&self.items[left_idx], &self.items[idx]) {
+                self.items.swap(left_idx, idx);
+                idx = left_idx;
+            } else {
+                break;
+            }
+        }
+
+        Some(std::mem::take(&mut self.items[self.count]))
     }
 }
 
